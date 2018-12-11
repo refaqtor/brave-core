@@ -353,4 +353,11 @@ void BatLedgerImpl::GetAddressesForPaymentId(
       std::bind(BatLedgerImpl::OnAddressesForPaymentId, holder, _1));
 }
 
+void BatLedgerImpl::GetRewardsInternalsInfo(
+    GetRewardsInternalsInfoCallback callback) {
+  ledger::RewardsInternalsInfo info;
+  ledger_->GetRewardsInternalsInfo(info);
+  std::move(callback).Run(info.ToJson());
+}
+
 } // namespace bat_ledger

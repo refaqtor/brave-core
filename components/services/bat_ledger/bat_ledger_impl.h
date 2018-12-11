@@ -120,9 +120,10 @@ class BatLedgerImpl : public mojom::BatLedger,
         GetRewardsMainEnabledCallback callback) override;
     void HasSufficientBalanceToReconcile(
         HasSufficientBalanceToReconcileCallback callback) override;
-
     void GetAddressesForPaymentId(
         GetAddressesForPaymentIdCallback callback) override;
+    void GetRewardsInternalsInfo(
+        GetRewardsInternalsInfoCallback callback) override;
 
   private:
     // workaround to pass base::OnceCallback into std::bind

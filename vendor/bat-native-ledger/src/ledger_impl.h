@@ -306,6 +306,8 @@ class LedgerImpl : public ledger::Ledger,
 
   void SetAddresses(std::map<std::string, std::string> addresses);
 
+  void GetRewardsInternalsInfo(ledger::RewardsInternalsInfo& info) override;
+
  private:
   void AddRecurringPayment(const std::string& publisher_id, const double& value) override;
   void OnLoad(const ledger::VisitData& visit_data, const uint64_t& current_time) override;
