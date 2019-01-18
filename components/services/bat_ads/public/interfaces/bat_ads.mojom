@@ -61,6 +61,7 @@ interface BatAdsClient {
 
 interface BatAds {
   Initialize() => ();
+  IsSupportedRegion() => (bool is_supported);
   ClassifyPage(string url, string page);
   TabClosed(int32 tab_id);
   OnTimer(uint32 timer_id);

@@ -493,6 +493,13 @@ void AdsServiceImpl::TabClosed(SessionID tab_id) {
   bat_ads_->TabClosed(tab_id.id());
 }
 
+bool AdsServiceImpl::IsSupportedRegion() {
+  if (!connected())
+    return false;
+
+  return bat_ads_->IsSupportedRegion();
+}
+
 void AdsServiceImpl::ClassifyPage(const std::string& url,
                                   const std::string& page) {
   if (!connected())
