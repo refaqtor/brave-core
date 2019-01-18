@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/ui/webui/extensions/extensions_ui.cc b/chrome/browser/ui/webui/extensions/extensions_ui.cc
+index 1b7560672a3608c7331799ce516d63066bf4d068..95b9c322c402e6c9cd36b0d2933d7e126941f98e 100644
+--- a/chrome/browser/ui/webui/extensions/extensions_ui.cc
++++ b/chrome/browser/ui/webui/extensions/extensions_ui.cc
+@@ -344,6 +344,8 @@ content::WebUIDataSource* CreateMdExtensionsSource(bool in_dev_mode) {
+   source->SetDefaultResource(IDR_MD_EXTENSIONS_EXTENSIONS_HTML);
+ #endif
+ 
++  BraveAddExtensionsResources(source);
++
+   return source;
+ }
+ 
