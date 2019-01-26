@@ -1374,7 +1374,7 @@ void RewardsServiceImpl::SetRewardsMainEnabledPref(bool enabled) {
 }
 
 void RewardsServiceImpl::SetRewardsMainEnabledMigratedPref(bool enabled) {
-  profile_->GetPrefs()->SetBoolean(prefs::kBraveRewardsEnabledMigrated, enabled);
+  profile_->GetPrefs()->SetBoolean(prefs::kBraveRewardsEnabledMigrated, true);
 }
 
 void RewardsServiceImpl::GetPublisherMinVisitTime(
