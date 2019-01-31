@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import {
   ModalActivity,
   ModalBackupRestore,
+  ModalPending,
   WalletWrapper,
   WalletEmpty,
   WalletSummary
@@ -31,6 +32,7 @@ interface State {
   modalBackup: boolean
   modalActivity: boolean
   modalAddFunds: boolean
+  modalPendingContribution: boolean
 }
 
 interface Props extends Rewards.ComponentProps {
@@ -43,7 +45,8 @@ class PageWallet extends React.Component<Props, State> {
       activeTabId: 0,
       modalBackup: false,
       modalActivity: false,
-      modalAddFunds: false
+      modalAddFunds: false,
+      modalPendingContribution: false
     }
   }
 
@@ -171,6 +174,12 @@ class PageWallet extends React.Component<Props, State> {
     })
   }
 
+  onModalPendingToggle = () => {
+    this.setState({
+      modalPendingContribution: !this.state.modalPendingContribution
+    })
+  }
+
   isAddFundsUrl = () => {
     if (window && window.location && window.location.hash && window.location.hash === '#add-funds') {
       this.setState({
@@ -242,7 +251,7 @@ class PageWallet extends React.Component<Props, State> {
   }
 
   getWalletSummary = () => {
-    const { walletInfo, reports } = this.props.rewardsData
+    const { walletInfo, reports, pendingContributionTotal } = this.props.rewardsData
     const { rates } = walletInfo
 
     let props = {}
@@ -264,9 +273,21 @@ class PageWallet extends React.Component<Props, State> {
       }
     }
 
-    return {
-      report: props
+    let result: {report: any, onSeeAllReserved: any } = {
+      report: props,
+      onSeeAllReserved: undefined
     }
+
+    if (pendingContributionTotal > 0) {
+      result.onSeeAllReserved = this.onModalPendingToggle.bind(this)
+    }
+
+    return result
+  }
+
+  // TODO remove
+  doNothing = () => {
+    console.log('nothing')
   }
 
   render () {
@@ -338,6 +359,62 @@ class PageWallet extends React.Component<Props, State> {
             ? <ModalAddFunds
               onClose={this.closeModalAddFunds}
               addresses={addressArray}
+            />
+            : null
+        }
+        {
+          this.state.modalPendingContribution
+            ? <ModalPending
+              onClose={this.onModalPendingToggle}
+              rows={[
+                {
+                  profile: {
+                    name: 'Bart Baker',
+                    verified: false,
+                    provider: 'youtube',
+                    src: ""
+                  },
+                  url: 'https://brave.com',
+                  type: 'recurring',
+                  amount: {
+                    tokens: '2.0',
+                    converted: '0.20'
+                  },
+                  date: 'Jan 2',
+                  onRemove: this.doNothing
+                },
+                {
+                  profile: {
+                    verified: false,
+                    name: 'theguardian.com',
+                    src: ""
+                  },
+                  url: 'https://brave.com',
+                  type: 'tip',
+                  amount: {
+                    tokens: '12000.0',
+                    converted: '6000.20'
+                  },
+                  date: 'May 7',
+                  onRemove: this.doNothing
+                },
+                {
+                  profile: {
+                    verified: false,
+                    name: 'BrendanEich',
+                    provider: 'twitter',
+                    src: ""
+                  },
+                  url: 'https://brave.com',
+                  type: 'ac',
+                  amount: {
+                    tokens: '1.0',
+                    converted: '0.20'
+                  },
+                  date: 'May 2',
+                  onRemove: this.doNothing
+                }
+              ]}
             />
             : null
         }
