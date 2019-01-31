@@ -160,8 +160,12 @@ bool BraveContentBrowserClient::AllowAccessCookie(
 
 #if BUILDFLAG(BRAVE_STP_ENABLED)
   allow = g_brave_browser_process->tracking_protection_service()->
-    ShouldStoreState(io_data->GetHostContentSettingsMap(), render_process_id,
-      render_frame_id, url, first_party);
+    ShouldStoreState(
+        io_data->GetHostContentSettingsMap(),
+        render_process_id,
+        render_frame_id,
+        url,
+        first_party);
   if (!allow) {
     return allow;
   }
@@ -180,9 +184,13 @@ bool BraveContentBrowserClient::AllowAccessCookie(
       brave_shields::kCookies);
   content_settings::BraveCookieSettings* cookie_settings =
       (content_settings::BraveCookieSettings*)io_data->GetCookieSettings();
-  allow = !ShouldBlockCookie(allow_brave_shields, allow_1p_cookies,
-                   allow_3p_cookies, first_party, url) &&
-      cookie_settings->IsCookieAccessAllowed(url, first_party, tab_origin);
+  allow = !ShouldBlockCookie(
+            allow_brave_shields,
+            allow_1p_cookies,
+            allow_3p_cookies,
+            first_party,
+            url) &&
+          cookie_settings->IsCookieAccessAllowed(url, first_party, tab_origin);
   return allow;
 }
 
@@ -236,8 +244,15 @@ bool BraveContentBrowserClient::HandleExternalProtocol(
   }
 
   return ChromeContentBrowserClient::HandleExternalProtocol(
-      url, web_contents_getter, child_id, navigation_data, is_main_frame,
-      page_transition, has_user_gesture, method, headers);
+             url,
+             web_contents_getter,
+             child_id,
+             navigation_data,
+             is_main_frame,
+             page_transition,
+             has_user_gesture,
+             method,
+             headers);
 }
 
 void BraveContentBrowserClient::RegisterOutOfProcessServices(
