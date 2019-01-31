@@ -565,16 +565,18 @@ void LedgerImpl::FetchWalletProperties() const {
   bat_client_->getWalletProperties();
 }
 
-void LedgerImpl::FetchGrant(const std::string& lang,
+void LedgerImpl::FetchGrants(const std::string& lang,
                               const std::string& payment_id) const {
-  bat_client_->getGrant(lang, payment_id);
+  bat_client_->getGrants(lang, payment_id);
 }
 
 void LedgerImpl::OnGrant(ledger::Result result, const braveledger_bat_helper::GRANT& properties) {
   ledger::Grant grant;
 
+  grant.type = properties.type;
   grant.promotionId = properties.promotionId;
   last_grant_check_timer_id_ = 0;
+
   RefreshGrant(result != ledger::Result::LEDGER_OK &&
     result != ledger::Result::GRANT_NOT_FOUND);
   ledger_client_->OnGrant(result, grant);
@@ -623,7 +625,7 @@ void LedgerImpl::OnRecoverWallet(ledger::Result result, double balance, const st
 }
 
 void LedgerImpl::SolveGrantCaptcha(const std::string& solution) const {
-  bat_client_->setGrant(solution, "");
+  bat_client_->setGrants(solution, "");
 }
 
 void LedgerImpl::OnGrantFinish(ledger::Result result, const braveledger_bat_helper::GRANT& grant) {
@@ -707,7 +709,7 @@ void LedgerImpl::OnTimer(uint32_t timer_id) {
         ledger::URL_METHOD::GET, callback);
   } else if (timer_id == last_grant_check_timer_id_) {
     last_grant_check_timer_id_ = 0;
-    FetchGrant(std::string(), std::string());
+    FetchGrants(std::string(), std::string());
   }
 
   bat_contribution_->OnTimer(timer_id);
@@ -972,12 +974,12 @@ void LedgerImpl::SetPaymentId(const std::string& payment_id) {
   bat_state_->SetPaymentId(payment_id);
 }
 
-const braveledger_bat_helper::GRANT& LedgerImpl::GetGrant() const {
-  return bat_state_->GetGrant();
+const braveledger_bat_helper::Grants& LedgerImpl::GetGrants() const {
+  return bat_state_->GetGrants();
 }
 
-void LedgerImpl::SetGrant(braveledger_bat_helper::GRANT grant) {
-  bat_state_->SetGrant(grant);
+void LedgerImpl::SetGrants(braveledger_bat_helper::Grants grants) {
+  bat_state_->SetGrants(grants);
 }
 
 const std::string& LedgerImpl::GetPersonaId() const {
