@@ -147,6 +147,12 @@ window.cr.define('brave_rewards', function () {
     getActions().onPendingContributions(list)
   }
 
+  function onRemovePendingContribution (result: number) {
+    if (result === 0) {
+      getActions().getPendingContributions()
+    }
+  }
+
   return {
     initialize,
     walletCreated,
@@ -172,7 +178,8 @@ window.cr.define('brave_rewards', function () {
     pendingContributions,
     onPendingContributionSaved,
     rewardsEnabled,
-    addressesForPaymentId
+    addressesForPaymentId,
+    onRemovePendingContribution
   }
 })
 

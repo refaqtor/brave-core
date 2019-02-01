@@ -55,3 +55,11 @@ chrome.braveRewards.onPendingContributionSaved.addListener((result: number) => {
 chrome.braveRewards.onWalletFailed.addListener(() => {
   rewardsPanelActions.onWalletCreateFailed()
 })
+
+chrome.braveRewards.onPendingContributionSaved.addListener((result: number) => {
+  if (result === 0) {
+    chrome.braveRewards.getPendingContributionsTotal(((amount: number) => {
+      rewardsPanelActions.OnPendingContributionsTotal(amount)
+    }))
+  }
+})

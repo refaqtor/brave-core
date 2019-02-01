@@ -174,7 +174,9 @@ export const onAddressesForPaymentId = (addresses: Record<Rewards.AddressesType,
     addresses
   })
 
-export const removePendingContribution = (publisherKey: string, viewingId: string) => action(types.REMOVE_PENDING_CONTRIBUTION, {
-  publisherKey,
-  viewingId
-})
+export const removePendingContribution = (publisherKey: string, viewingId: string, addedDate: number) =>
+  action(types.REMOVE_PENDING_CONTRIBUTION, {
+    publisherKey,
+    viewingId,
+    addedDate
+  })

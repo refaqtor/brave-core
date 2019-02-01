@@ -238,6 +238,17 @@
         "type": "function",
         "description": "Fired when wallet creation failed",
         "parameters": []
+      },
+      {
+        "name": "onRemovePendingContribution",
+        "type": "function",
+        "description": "",
+        "parameters": [
+          {
+            "name": "result",
+            "type": "integer"
+          }
+        ]
       }
     ],
     "functions": [

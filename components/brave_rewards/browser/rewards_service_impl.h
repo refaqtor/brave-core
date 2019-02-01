@@ -185,6 +185,10 @@ class RewardsServiceImpl : public RewardsService,
   void GetPendingContributions(
     const GetPendingContributionsCallback& callback) override;
 
+  void RemovePendingContribution(const std::string& publisher_key,
+                                 const std::string& viewing_id,
+                                 uint64_t added_date) override;
+
   // Testing methods
   void SetLedgerEnvForTesting();
 
@@ -249,6 +253,8 @@ class RewardsServiceImpl : public RewardsService,
   void TriggerOnGetCurrentBalanceReport(const ledger::BalanceReportInfo& report);
   void MaybeShowBackupNotification(uint64_t boot_stamp);
   void MaybeShowAddFundsNotification(uint64_t reconcile_stamp);
+
+  void OnRemovePendingContribution(bool result);
 
   // ledger::LedgerClient
   std::string GenerateGUID() const override;

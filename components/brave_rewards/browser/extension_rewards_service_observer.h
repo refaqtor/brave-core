@@ -30,6 +30,8 @@ class ExtensionRewardsServiceObserver : public RewardsServiceObserver,
                           int error_code,
                           std::unique_ptr<brave_rewards::WalletProperties>
                               wallet_properties) override;
+  void OnRemovePendingContribution(RewardsService* rewards_service,
+                                   int result) override;
 
   // RewardsServicePrivateObserver implementation
   void OnGetCurrentBalanceReport(RewardsService* rewards_service,

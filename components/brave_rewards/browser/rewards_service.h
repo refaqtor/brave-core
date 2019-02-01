@@ -160,6 +160,9 @@ class RewardsService : public KeyedService {
     const GetRewardsMainEnabledCallback& callback) const = 0;
   virtual void GetPendingContributions(
     const GetPendingContributionsCallback& callback) = 0;
+  virtual void RemovePendingContribution(const std::string& publisher_key,
+                                         const std::string& viewing_id,
+                                         uint64_t added_date) = 0;
 
   virtual void GetAddressesForPaymentId(
       const GetAddressesCallback& callback) = 0;
