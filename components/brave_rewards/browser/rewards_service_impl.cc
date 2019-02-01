@@ -2445,4 +2445,26 @@ void RewardsServiceImpl::GetAddressesForPaymentId(
                      callback));
 }
 
+brave_rewards::PendingContributionInfoList PendingContributionsOnFileTaskRunner(
+    PublisherInfoDatabase* backend) {
+  brave_rewards::PendingContributionInfoList list;
+  if (!backend) {
+    return list;
+  }
+
+  backend->GetPendingContributions(&list);
+
+  return list;
+}
+
+void RewardsServiceImpl::GetPendingContributions(
+    const GetPendingContributionsCallback& callback) {
+  base::PostTaskAndReplyWithResult(
+      file_task_runner_.get(),
+      FROM_HERE,
+      base::Bind(&PendingContributionsOnFileTaskRunner,
+                 publisher_info_backend_.get()),
+      callback);
+}
+
 }  // namespace brave_rewards

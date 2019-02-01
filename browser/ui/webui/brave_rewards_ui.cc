@@ -100,6 +100,9 @@ class RewardsDOMHandler : public WebUIMessageHandler,
   void OnGetPendingContributionsTotal(double amount);
   void OnContentSiteUpdated(brave_rewards::RewardsService* rewards_service) override;
   void GetAddressesForPaymentId(const base::ListValue* args);
+  void GetPendingContributions(const base::ListValue* args);
+  void OnGetPendingContributions(
+    const brave_rewards::PendingContributionInfoList& list);
 
   // RewardsServiceObserver implementation
   void OnWalletInitialized(brave_rewards::RewardsService* rewards_service,
@@ -252,6 +255,9 @@ void RewardsDOMHandler::RegisterMessages() {
                                                         base::Unretained(this)));
   web_ui()->RegisterMessageCallback("brave_rewards.getAddressesForPaymentId",
                                     base::BindRepeating(&RewardsDOMHandler::GetAddressesForPaymentId,
+                                                        base::Unretained(this)));
+  web_ui()->RegisterMessageCallback("brave_rewards.getPendingContributions",
+                                    base::BindRepeating(&RewardsDOMHandler::GetPendingContributions,
                                                         base::Unretained(this)));
 }
 
@@ -926,6 +932,41 @@ void RewardsDOMHandler::GetAddressesForPaymentId(
           &RewardsDOMHandler::OnGetAddresses,
           weak_factory_.GetWeakPtr(),
           "addressesForPaymentId"));
+  }
+}
+
+void RewardsDOMHandler::GetPendingContributions(
+    const base::ListValue* args) {
+  if (rewards_service_) {
+    rewards_service_->GetPendingContributions(base::Bind(
+          &RewardsDOMHandler::OnGetPendingContributions,
+          weak_factory_.GetWeakPtr()));
+  }
+}
+
+void RewardsDOMHandler::OnGetPendingContributions(
+    const brave_rewards::PendingContributionInfoList& list) {
+  if (web_ui()->CanCallJavascript()) {
+    auto contributions = std::make_unique<base::ListValue>();
+    for (auto const& item : list) {
+      auto contribution = std::make_unique<base::DictionaryValue>();
+      contribution->SetDouble("percentage", item.percentage);
+      contribution->SetString("publisherKey", item.publisher_key);
+      contribution->SetBoolean("verified", item.verified);
+      contribution->SetInteger("excluded", item.excluded);
+      contribution->SetString("name", item.name);
+      contribution->SetString("provider", item.provider);
+      contribution->SetString("url", item.url);
+      contribution->SetString("favIcon", item.favicon_url);
+      contribution->SetDouble("amount", item.amount);
+      contribution->SetInteger("addedDate", item.added_date);
+      contribution->SetInteger("category", item.category);
+      contribution->SetString("viewingId", item.viewing_id);
+      contributions->Append(std::move(contribution));
+    }
+
+    web_ui()->CallJavascriptFunctionUnsafe("brave_rewards.pendingContributions",
+                                           *contributions);
   }
 }
 

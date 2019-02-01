@@ -182,6 +182,9 @@ class RewardsServiceImpl : public RewardsService,
 
   void GetAddressesForPaymentId(const GetAddressesCallback& callback) override;
 
+  void GetPendingContributions(
+    const GetPendingContributionsCallback& callback) override;
+
   // Testing methods
   void SetLedgerEnvForTesting();
 
