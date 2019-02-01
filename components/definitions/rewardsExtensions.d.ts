@@ -1,11 +1,12 @@
 declare namespace RewardsExtension {
   interface State {
+    currentGrant?: GrantInfo
     currentNotification?: string
     enabledMain: boolean
     notifications: Record<number, Notification>
     publishers: Record<string, Publisher>
     report: Report
-    grant?: GrantInfo
+    grants?: GrantInfo[]
     pendingContributionTotal: number
     walletCreated: boolean
     walletCreating: boolean
@@ -50,6 +51,13 @@ declare namespace RewardsExtension {
     captcha?: string
     hint?: string
     status?: GrantStatus
+    type?: string
+  }
+
+  export interface GrantResponse {
+    promotionId?: string
+    status?: number
+    type?: string
   }
 
   export interface GrantFinish {
