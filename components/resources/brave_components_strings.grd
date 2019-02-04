@@ -277,6 +277,9 @@
       <message name="IDS_BRAVE_REWARDS_INTERNALS_VIEWING_ID" desc="Viewing ID">Viewing ID:</message>
       <message name="IDS_BRAVE_REWARDS_INTERNALS_WALLET_PAYMENT_ID" desc="Wallet payment ID">Wallet Payment ID:</message>
 
+      <!-- WebUI version resources -->
+      <message name="IDS_BRAVE_VERSION_REWARDS_DETAILS" desc="Brave Rewards details on the about:version page">More details about Brave Rewards</message>
+
       <!-- WebUI brave ui resources -->
       <message name="IDS_BRAVE_UI_ABOUT" desc="">about</message>
       <message name="IDS_BRAVE_UI_ACCEPT" desc="">Accept</message>
