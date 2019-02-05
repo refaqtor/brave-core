@@ -325,6 +325,10 @@ class PageWallet extends React.Component<Props, State> {
     })
   }
 
+  removeAllPendingContribution = () => {
+    this.actions.removeAllPendingContribution()
+  }
+
   render () {
     const {
       connectedWallet,
@@ -401,6 +405,7 @@ class PageWallet extends React.Component<Props, State> {
             ? <ModalPending
               onClose={this.onModalPendingToggle}
               rows={this.getPendingRows()}
+              onRemoveAll={this.removeAllPendingContribution}
             />
             : null
         }

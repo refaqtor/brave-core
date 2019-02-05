@@ -351,6 +351,7 @@ void CustomizeWebUIHTMLSource(const std::string &name, content::WebUIDataSource*
         { "paymentWarning", IDS_BRAVE_UI_PAYMENT_WARNING },
         { "pendingContributions", IDS_BRAVE_UI_PENDING_CONTRIBUTIONS },
         { "pendingContributionEmpty", IDS_BRAVE_UI_PENDING_CONTRIBUTION_EMPTY },
+        { "pendingContributionRemoveAll", IDS_BRAVE_UI_PENDING_CONTRIBUTION_REMOVE_ALL },
         { "pendingTyperecurring", IDS_BRAVE_UI_PENDING_TYPE_RECURRING },
         { "pendingTypetip", IDS_BRAVE_UI_PENDING_TYPE_TIP },
         { "pendingTypeac", IDS_BRAVE_UI_PENDING_TYPE_AC },

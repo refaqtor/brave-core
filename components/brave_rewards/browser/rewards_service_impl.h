@@ -189,6 +189,8 @@ class RewardsServiceImpl : public RewardsService,
                                  const std::string& viewing_id,
                                  uint64_t added_date) override;
 
+  void RemoveAllPendingContribution() override;
+
   // Testing methods
   void SetLedgerEnvForTesting();
 
@@ -255,6 +257,8 @@ class RewardsServiceImpl : public RewardsService,
   void MaybeShowAddFundsNotification(uint64_t reconcile_stamp);
 
   void OnRemovePendingContribution(bool result);
+
+  void OnRemoveAllPendingContribution(bool result);
 
   // ledger::LedgerClient
   std::string GenerateGUID() const override;
