@@ -102,7 +102,7 @@ void BraveProfileManager::DoFinalInitForServices(Profile* profile,
   brave_ads::AdsServiceFactory::GetForProfile(profile);
   brave_rewards::RewardsServiceFactory::GetForProfile(profile);
 
-  brave_shields::SetShieldsDefaultsFromCommandLineForTesting(profile);
+  brave_shields::SetShieldsDefaultsFromCommandLine(profile);
 }
 
 void BraveProfileManager::LaunchTorProcess(Profile* profile) {
