@@ -1,5 +1,5 @@
 diff --git a/content/browser/permissions/permission_service_impl.cc b/content/browser/permissions/permission_service_impl.cc
-index 6d5525503adba9df92de57f502983f98b9b3e130..d97b35175bf9315ded053e823101933d963aacbb 100644
+index 064107bb01905b192c9410dd7e9937a74d64afc1..50ad5f27301051d16e6bace2a0c70a0da0c02669 100644
 --- a/content/browser/permissions/permission_service_impl.cc
 +++ b/content/browser/permissions/permission_service_impl.cc
 @@ -88,6 +88,9 @@ bool PermissionDescriptorToPermissionType(
@@ -12,3 +12,16 @@ index 6d5525503adba9df92de57f502983f98b9b3e130..d97b35175bf9315ded053e823101933d
    }
  
    NOTREACHED();
+@@ -219,6 +222,12 @@ void PermissionServiceImpl::HasPermission(PermissionDescriptorPtr permission,
+   std::move(callback).Run(GetPermissionStatus(permission));
+ }
+ 
++bool PermissionServiceImpl::HasPermission(blink::mojom::PermissionDescriptorPtr permission,
++                                          blink::mojom::PermissionStatus* out_status) {
++  *out_status = GetPermissionStatus(permission);
++  return true;
++}
++
+ void PermissionServiceImpl::RevokePermission(
+     PermissionDescriptorPtr permission,
+     PermissionStatusCallback callback) {
