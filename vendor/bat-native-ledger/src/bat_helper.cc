@@ -1119,7 +1119,7 @@ static bool ignore_ = false;
   CURRENT_RECONCILE::CURRENT_RECONCILE() :
     timestamp_(0),
     fee_(.0),
-    retry_step_(braveledger_bat_helper::ContributionRetry::STEP_NO),
+    retry_step_(ledger::ContributionRetry::STEP_NO),
     retry_level_(0) {}
 
   CURRENT_RECONCILE::CURRENT_RECONCILE(const CURRENT_RECONCILE& data):
@@ -1209,10 +1209,10 @@ static bool ignore_ = false;
       }
 
       if (d.HasMember("retry_step") && d["retry_step"].IsInt()) {
-        retry_step_ = static_cast<braveledger_bat_helper::ContributionRetry>(
+        retry_step_ = static_cast<ledger::ContributionRetry>(
             d["retry_step"].GetInt());
       } else {
-        retry_step_ = braveledger_bat_helper::ContributionRetry::STEP_NO;
+        retry_step_ = ledger::ContributionRetry::STEP_NO;
       }
 
       if (d.HasMember("retry_level") && d["retry_level"].IsInt()) {
@@ -2903,6 +2903,24 @@ static bool ignore_ = false;
     writer.EndObject();
   }
 
+  void saveToJson(JsonWriter& writer, const ledger::CurrentReconcileInfo& data) {
+    writer.StartObject();
+
+    writer.String("viewingId");
+    writer.String(data.viewingId_.c_str());
+
+    writer.String("amount");
+    writer.String(data.amount_.c_str());
+
+    writer.String("retry_step");
+    writer.Int(data.retry_step_);
+
+    writer.String("retry_level");
+    writer.Int(data.retry_level_);
+
+    writer.EndObject();
+  }
+
   void saveToJson(JsonWriter& writer,
                   const ledger::RewardsInternalsInfo& info) {
     writer.StartObject();
@@ -2915,23 +2933,8 @@ static bool ignore_ = false;
 
     writer.String("current_reconciles");
     writer.StartArray();
-    for (const auto& reconcile : info.current_reconciles) {
-      writer.StartObject();
-
-      writer.String("viewing_id");
-      writer.String(reconcile.second.viewing_id.c_str());
-
-      writer.String("amount");
-      writer.String(reconcile.second.amount.c_str());
-
-      writer.String("retry_step");
-      writer.Int(reconcile.second.retry_step);
-
-      writer.String("retry_level");
-      writer.Int(reconcile.second.retry_level);
-
-      writer.EndObject();
-    }
+    for (const auto& reconcile : info.current_reconciles)
+      saveToJson(writer, reconcile.second);
     writer.EndArray();
 
     writer.EndObject();
