@@ -3,6 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "base/files/scoped_temp_dir.h"
+#include "base/macros.h"
 #include "base/path_service.h"
 #include "base/run_loop.h"
 #include "base/single_thread_task_runner.h"
@@ -46,9 +48,7 @@ class BrowserRemovedObserver : public BrowserListObserver {
     original_browsers_count_ = BrowserList::GetInstance()->size();
   }
 
-  ~BrowserRemovedObserver() override {
-    BrowserList::RemoveObserver(this);
-  }
+  ~BrowserRemovedObserver() override { BrowserList::RemoveObserver(this); }
 
   Browser* CheckReturn() const {
     EXPECT_EQ(original_browsers_count_ - 1, chrome::GetTotalBrowserCount());
@@ -84,6 +84,7 @@ class BraveClearDataOnExitTest
     : public InProcessBrowserTest,
       public BraveClearBrowsingData::OnExitTestingCallback {
  public:
+  BraveClearDataOnExitTest() = default;
   void SetUpOnMainThread() override {
     BraveClearBrowsingData::SetOnExitTestingCallback(this);
   }
@@ -111,11 +112,10 @@ class BraveClearDataOnExitTest
   void TearDownInProcessBrowserTestFixture() override {
     // Verify expected number of calls to remove browsing data.
     EXPECT_EQ(remove_data_call_count_, expected_remove_data_call_count_);
+    BraveClearBrowsingData::SetOnExitTestingCallback(nullptr);
   }
 
-  int GetRemoveDataCallCount() {
-    return remove_data_call_count_;
-  }
+  int remove_data_call_count() { return remove_data_call_count_; }
 
   void SetExepectedRemoveDataCallCount(int count) {
     expected_remove_data_call_count_ = count;
@@ -137,8 +137,6 @@ class BraveClearDataOnExitTest
     prefService->SetBoolean(browsing_data::prefs::kDeleteFormDataOnExit, true);
     prefService->SetBoolean(browsing_data::prefs::kDeleteHostedAppsDataOnExit,
                             true);
-    prefService->SetBoolean(browsing_data::prefs::kDeleteMediaLicensesOnExit,
-                            true);
     prefService->SetBoolean(browsing_data::prefs::kDeleteSiteSettingsOnExit,
                             true);
   }
@@ -150,7 +148,6 @@ class BraveClearDataOnExitTest
            ChromeBrowsingDataRemoverDelegate::DATA_TYPE_SITE_DATA |
            ChromeBrowsingDataRemoverDelegate::DATA_TYPE_PASSWORDS |
            ChromeBrowsingDataRemoverDelegate::DATA_TYPE_FORM_DATA |
-           content::BrowsingDataRemover::DATA_TYPE_MEDIA_LICENSES |
            ChromeBrowsingDataRemoverDelegate::DATA_TYPE_CONTENT_SETTINGS;
   }
 
@@ -177,6 +174,8 @@ class BraveClearDataOnExitTest
   int expected_remove_data_call_count_ = 0;
   int expected_remove_mask_ = -1;
   int expected_origin_mask_ = -1;
+
+  DISALLOW_COPY_AND_ASSIGN(BraveClearDataOnExitTest);
 };
 
 IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTest, NoPrefsSet) {
@@ -216,7 +215,7 @@ class BraveClearDataOnExitTwoBrowsersTest : public BraveClearDataOnExitTest {
     Browser* browser = browser_added_observer.WaitForSingleNewBrowser();
     DCHECK(browser);
     content::WaitForLoadStopWithoutSuccessCheck(
-      browser->tab_strip_model()->GetActiveWebContents());
+        browser->tab_strip_model()->GetActiveWebContents());
     return browser;
   }
 
@@ -236,8 +235,6 @@ class BraveClearDataOnExitTwoBrowsersTest : public BraveClearDataOnExitTest {
         TemplateURLServiceFactory::GetForProfile(guest));
     // Navigate to about:blank.
     ui_test_utils::NavigateToURL(browser, GURL(url::kAboutBlankURL));
-    content::WaitForLoadStopWithoutSuccessCheck(
-      browser->tab_strip_model()->GetActiveWebContents());
     return browser;
   }
 
@@ -246,8 +243,9 @@ class BraveClearDataOnExitTwoBrowsersTest : public BraveClearDataOnExitTest {
     base::FilePath path;
     base::PathService::Get(chrome::DIR_USER_DATA, &path);
     path = path.AppendASCII("Profile 2");
-
     base::ScopedAllowBlockingForTesting allow_blocking;
+    // Clean up profile directory when the test is done.
+    ignore_result(profile2_dir_.Set(path));
     ProfileManager* profile_manager = g_browser_process->profile_manager();
     size_t starting_number_of_profiles = profile_manager->GetNumberOfProfiles();
     if (!base::PathExists(path) && !base::CreateDirectory(path))
@@ -266,12 +264,26 @@ class BraveClearDataOnExitTwoBrowsersTest : public BraveClearDataOnExitTest {
     chrome::ExecuteCommand(browser, IDC_CLOSE_WINDOW);
     EXPECT_EQ(bro.WaitForBrowserRemoval(), browser);
   }
+
+  // Enable deletion of browsing history on exit.
+  void SetDeleteBrowsingHistoryOnExit(Profile* profile) {
+    profile->GetPrefs()->SetBoolean(
+        browsing_data::prefs::kDeleteBrowsingHistoryOnExit, true);
+  }
+
+  void SetDeleteBrowsingHistoryOnExit() {
+    SetDeleteBrowsingHistoryOnExit(browser()->profile());
+  }
+
+ private:
+  base::ScopedTempDir profile2_dir_;
+
+  DISALLOW_COPY_AND_ASSIGN(BraveClearDataOnExitTwoBrowsersTest);
 };
 
 IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, SameProfile) {
   // Delete browsing history on exit.
-  browser()->profile()->GetPrefs()->SetBoolean(
-      browsing_data::prefs::kDeleteBrowsingHistoryOnExit, true);
+  SetDeleteBrowsingHistoryOnExit();
   // Same profile, so expect a single call.
   SetExepectedRemoveDataCallCount(1);
 
@@ -279,7 +291,7 @@ IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, SameProfile) {
   Browser* second_window = NewBrowserWindow(browser()->profile());
   // Close second browser window
   CloseBrowserWindow(second_window);
-  EXPECT_EQ(0, GetRemoveDataCallCount());
+  EXPECT_EQ(0, remove_data_call_count());
 
   // Tell the application to quit.
   chrome::ExecuteCommand(browser(), IDC_EXIT);
@@ -287,8 +299,7 @@ IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, SameProfile) {
 
 IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneOTR) {
   // Delete browsing history on exit.
-  browser()->profile()->GetPrefs()->SetBoolean(
-    browsing_data::prefs::kDeleteBrowsingHistoryOnExit, true);
+  SetDeleteBrowsingHistoryOnExit();
   // OTR sessions don't count, so expect a single call.
   SetExepectedRemoveDataCallCount(1);
 
@@ -297,7 +308,7 @@ IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneOTR) {
       NewBrowserWindow(browser()->profile()->GetOffTheRecordProfile());
   // Close second browser window
   CloseBrowserWindow(second_window);
-  EXPECT_EQ(0, GetRemoveDataCallCount());
+  EXPECT_EQ(0, remove_data_call_count());
 
   // Tell the application to quit.
   chrome::ExecuteCommand(browser(), IDC_EXIT);
@@ -305,18 +316,17 @@ IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneOTR) {
 
 IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneOTRExitsLast) {
   // Delete browsing history on exit.
-  browser()->profile()->GetPrefs()->SetBoolean(
-    browsing_data::prefs::kDeleteBrowsingHistoryOnExit, true);
+  SetDeleteBrowsingHistoryOnExit();
   // OTR sessions don't count, so expect a single call.
   SetExepectedRemoveDataCallCount(1);
 
   // Open a second browser window with OTR profile.
   Browser* second_window =
-    NewBrowserWindow(browser()->profile()->GetOffTheRecordProfile());
+      NewBrowserWindow(browser()->profile()->GetOffTheRecordProfile());
 
   // Close regular profile window.
   CloseBrowserWindow(browser());
-  EXPECT_EQ(0, GetRemoveDataCallCount());
+  EXPECT_EQ(0, remove_data_call_count());
 
   // Tell the application to quit.
   chrome::ExecuteCommand(second_window, IDC_EXIT);
@@ -324,8 +334,7 @@ IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneOTRExitsLast) {
 
 IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneGuest) {
   // Delete browsing history on exit.
-  browser()->profile()->GetPrefs()->SetBoolean(
-    browsing_data::prefs::kDeleteBrowsingHistoryOnExit, true);
+  SetDeleteBrowsingHistoryOnExit();
   // Guest sessions don't count, so expect a single call.
   SetExepectedRemoveDataCallCount(1);
 
@@ -334,7 +343,7 @@ IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneGuest) {
 
   // Close Guest session window: regular profile cleanup shouldn't happen.
   CloseBrowserWindow(guest_window);
-  EXPECT_EQ(0, GetRemoveDataCallCount());
+  EXPECT_EQ(0, remove_data_call_count());
 
   // Tell the application to quit.
   chrome::ExecuteCommand(browser(), IDC_EXIT);
@@ -342,8 +351,7 @@ IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneGuest) {
 
 IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneGuestExitsLast) {
   // Delete browsing history on exit.
-  browser()->profile()->GetPrefs()->SetBoolean(
-    browsing_data::prefs::kDeleteBrowsingHistoryOnExit, true);
+  SetDeleteBrowsingHistoryOnExit();
   // Guest sessions don't count, so expect a single call.
   SetExepectedRemoveDataCallCount(1);
 
@@ -352,7 +360,7 @@ IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneGuestExitsLast) {
 
   // Close regular profile window.
   CloseBrowserWindow(browser());
-  EXPECT_EQ(0, GetRemoveDataCallCount());
+  EXPECT_EQ(0, remove_data_call_count());
 
   // Tell the application to quit.
   chrome::ExecuteCommand(guest_window, IDC_EXIT);
@@ -360,23 +368,21 @@ IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, OneGuestExitsLast) {
 
 IN_PROC_BROWSER_TEST_F(BraveClearDataOnExitTwoBrowsersTest, TwoProfiles) {
   // Delete browsing history on exit.
-  browser()->profile()->GetPrefs()->SetBoolean(
-      browsing_data::prefs::kDeleteBrowsingHistoryOnExit, true);
+  SetDeleteBrowsingHistoryOnExit();
 
   // Open a second browser window with a different profile.
   Browser* second_profile_window = NewProfileBrowserWindow();
   DCHECK(second_profile_window);
   // Delete browsing history for this profile on exit too.
   Profile* second_profile = second_profile_window->profile();
-  second_profile->GetPrefs()->SetBoolean(
-      browsing_data::prefs::kDeleteBrowsingHistoryOnExit, true);
+  SetDeleteBrowsingHistoryOnExit(second_profile);
 
   // Both profiles have browsing data removal set, so expect two calls.
   SetExepectedRemoveDataCallCount(2);
 
   // Close second profile window.
   CloseBrowserWindow(second_profile_window);
-  EXPECT_EQ(0, GetRemoveDataCallCount());
+  EXPECT_EQ(0, remove_data_call_count());
 
   // Tell the application to quit.
   chrome::ExecuteCommand(browser(), IDC_EXIT);

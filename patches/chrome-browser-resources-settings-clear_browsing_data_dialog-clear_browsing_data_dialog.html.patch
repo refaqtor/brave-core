@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/resources/settings/clear_browsing_data_dialog/clear_browsing_data_dialog.html b/chrome/browser/resources/settings/clear_browsing_data_dialog/clear_browsing_data_dialog.html
-index 1a086904cc3c93cb0ff6e0ad0eab0de850638591..55399a8db294850eb008a1a23caade99bb1dde7f 100644
+index 0a19b70ad2dde91cc593e96d597bb7e5b8798b44..c68ef8e7f04532aecd48e229603deb80a58f96a1 100644
 --- a/chrome/browser/resources/settings/clear_browsing_data_dialog/clear_browsing_data_dialog.html
 +++ b/chrome/browser/resources/settings/clear_browsing_data_dialog/clear_browsing_data_dialog.html
 @@ -17,6 +17,7 @@
@@ -18,7 +18,7 @@ index 1a086904cc3c93cb0ff6e0ad0eab0de850638591..55399a8db294850eb008a1a23caade99
          </paper-tabs>
        </div>
        <div slot="body">
-@@ -242,6 +244,11 @@
+@@ -236,6 +238,11 @@
                  disabled="[[clearingInProgress_]]">
              </settings-checkbox>
            </div>
@@ -30,7 +30,7 @@ index 1a086904cc3c93cb0ff6e0ad0eab0de850638591..55399a8db294850eb008a1a23caade99
          </iron-pages>
        </div>
        <div slot="button-container">
-@@ -255,6 +262,10 @@
+@@ -249,6 +256,10 @@
                                                 clearButtonDisabled_)]]">
              $i18n{clearData}
          </paper-button>

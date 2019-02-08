@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/resources/settings/clear_browsing_data_dialog/clear_browsing_data_dialog.js b/chrome/browser/resources/settings/clear_browsing_data_dialog/clear_browsing_data_dialog.js
-index ba8db3241392d66e429a66dba47a5b740f3dfd28..5c4d7a205492f6907652f3ed6cfca87d2e7990ab 100644
+index 64f57b57b24e8df7f0fefa44aa893a39af8c7676..9bfc5858cca3c55e05010d7c42093574ede228f1 100644
 --- a/chrome/browser/resources/settings/clear_browsing_data_dialog/clear_browsing_data_dialog.js
 +++ b/chrome/browser/resources/settings/clear_browsing_data_dialog/clear_browsing_data_dialog.js
-@@ -211,6 +211,7 @@ Polymer({
-     if (!tab)
+@@ -212,6 +212,7 @@ Polymer({
        return;
+     }
      this.clearButtonDisabled_ = this.getSelectedDataTypes_(tab).length == 0;
 +    this.updateButtonsVisibility_();
    },
  
    /**
-@@ -306,6 +307,7 @@ Polymer({
+@@ -307,6 +308,7 @@ Polymer({
      // Strip the common prefix, i.e. use only "<datatype>".
      const matches = prefName.match(/^browser\.clear_data\.(\w+)$/);
      this.set('counters_.' + assert(matches[1]), text);
@@ -18,7 +18,7 @@ index ba8db3241392d66e429a66dba47a5b740f3dfd28..5c4d7a205492f6907652f3ed6cfca87d
    },
  
    /**
-@@ -443,4 +445,33 @@ Polymer({
+@@ -446,4 +448,33 @@ Polymer({
    shouldShowFooter_: function() {
      return this.diceEnabled_ && !!this.syncStatus && !!this.syncStatus.signedIn;
    },
@@ -50,5 +50,5 @@ index ba8db3241392d66e429a66dba47a5b740f3dfd28..5c4d7a205492f6907652f3ed6cfca87d
 +    this.updateSaveButtonState_();
 +    if (!this.clearingInProgress_)
 +      this.$.clearBrowsingDataDialog.close();
-+  }
++  },
  });

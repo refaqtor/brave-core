@@ -14,8 +14,3 @@ void BraveBrowserMainPartsMac::PreMainMessageLoopStart() {
   // It would be no-op if udpate is disabled.
   [[SparkleGlue sharedSparkleGlue] registerWithSparkle];
 }
-
-void BraveBrowserMainPartsMac::PreShutdown() {
-  content::BraveClearBrowsingData::ClearOnExit();
-  ChromeBrowserMainPartsMac::PreShutdown();
-}

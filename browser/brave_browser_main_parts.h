@@ -6,16 +6,38 @@
 #ifndef BRAVE_BROWSER_BRAVE_BROWSER_MAIN_PARTS_H_
 #define BRAVE_BROWSER_BRAVE_BROWSER_MAIN_PARTS_H_
 
-#include "chrome/browser/chrome_browser_main.h"
+#include "content/public/browser/browser_main_parts.h"
 
-class BraveBrowserMainParts : public ChromeBrowserMainParts {
+#include <memory>
+
+namespace content {
+class ServiceManagerConnection;
+}
+
+class BraveBrowserMainParts : public content::BrowserMainParts {
  public:
-  using ChromeBrowserMainParts::ChromeBrowserMainParts;
-  ~BraveBrowserMainParts() override = default;
+  BraveBrowserMainParts(content::BrowserMainParts* parts);
+  ~BraveBrowserMainParts() override;
+
+  // BrowserMainParts overrides:
+  int PreEarlyInitialization() override;
+  void PostEarlyInitialization() override;
+  void PreMainMessageLoopStart() override;
+  void PostMainMessageLoopStart() override;
+  void ToolkitInitialized() override;
+  int PreCreateThreads() override;
+  void PostCreateThreads() override;
+  void ServiceManagerConnectionStarted(
+      content::ServiceManagerConnection* connection) override;
+  void PreMainMessageLoopRun() override;
+  bool MainMessageLoopRun(int* result_code) override;
+  void PreDefaultMainMessageLoopRun(base::OnceClosure quit_closure) override;
+  void PostMainMessageLoopRun() override;
+  void PreShutdown() override;
+  void PostDestroyThreads() override;
 
  private:
-  // ChromeBrowserMainParts overrides:
-  void PreShutdown() override;
+  std::unique_ptr<content::BrowserMainParts> parts_;
 };
 
 #endif  // BRAVE_BROWSER_BRAVE_BROWSER_MAIN_PARTS_H_

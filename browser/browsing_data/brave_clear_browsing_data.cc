@@ -9,14 +9,18 @@
 
 #include "base/run_loop.h"
 #include "base/scoped_observer.h"
+#include "base/trace_event/common/trace_event_common.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.h"
+#include "chrome/browser/lifetime/browser_shutdown.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/profiles/profile_manager.h"
 #include "chrome/common/pref_names.h"
 #include "components/browsing_data/core/pref_names.h"
 #include "components/prefs/pref_service.h"
 #include "content/public/browser/browsing_data_remover.h"
+
+namespace content {
 
 namespace {
 
@@ -93,9 +97,6 @@ bool BrowsingDataRemovalWatcher::GetClearBrowsingDataOnExitSettings(
     *origin_mask |= content::BrowsingDataRemover::ORIGIN_TYPE_PROTECTED_WEB;
   }
 
-  if (prefs->GetBoolean(browsing_data::prefs::kDeleteMediaLicensesOnExit))
-    *remove_mask |= content::BrowsingDataRemover::DATA_TYPE_MEDIA_LICENSES;
-
   // Note: this will also delete Brave Shields site-specific settings.
   // Corresponds to "Content settings" checkbox in the Clear Browsing Data
   // dialog.
@@ -162,13 +163,18 @@ void BrowsingDataRemovalWatcher::OnBrowsingDataRemoverDone() {
 
 }  // namespace
 
-namespace content {
-
 BraveClearBrowsingData::OnExitTestingCallback*
     BraveClearBrowsingData::on_exit_testing_callback_ = nullptr;
 
 // static
 void BraveClearBrowsingData::ClearOnExit() {
+  TRACE_EVENT0("browser", "BraveClearBrowsingData::ClearOnExit");
+  // Do not clear browsing data when the OS is ending session (logout/reboot/
+  // shutdown) to avoid corrupting data if the process is killed.
+  if (browser_shutdown::GetShutdownType() == browser_shutdown::END_SESSION) {
+    LOG(INFO) << "Will not clear browsing data on exit due to session ending.";
+    return;
+  }
   BrowsingDataRemovalWatcher watcher;
   watcher.ClearBrowsingDataForLoadedProfiles(on_exit_testing_callback_);
 }

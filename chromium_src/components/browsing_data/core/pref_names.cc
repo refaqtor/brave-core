@@ -10,7 +10,6 @@
 #undef RegisterBrowserUserPrefs
 
 namespace browsing_data {
-
 namespace prefs {
 
 const char kDeleteBrowsingHistoryOnExit[] =
@@ -23,8 +22,6 @@ const char kDeletePasswordsOnExit[] = "browser.clear_data.passwords_on_exit";
 const char kDeleteFormDataOnExit[] = "browser.clear_data.form_data_on_exit";
 const char kDeleteHostedAppsDataOnExit[] =
     "browser.clear_data.hosted_apps_data_on_exit";
-const char kDeleteMediaLicensesOnExit[] =
-    "browser.clear_data.media_licenses_on_exit";
 const char kDeleteSiteSettingsOnExit[] =
     "browser.clear_data.site_settings_on_exit";
 
@@ -38,10 +35,8 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
   registry->RegisterBooleanPref(kDeletePasswordsOnExit, false);
   registry->RegisterBooleanPref(kDeleteFormDataOnExit, false);
   registry->RegisterBooleanPref(kDeleteHostedAppsDataOnExit, false);
-  registry->RegisterBooleanPref(kDeleteMediaLicensesOnExit, false);
   registry->RegisterBooleanPref(kDeleteSiteSettingsOnExit, false);
 }
 
 }  // namespace prefs
-
 }  // namespace browsing_data

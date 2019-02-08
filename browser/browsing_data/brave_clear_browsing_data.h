@@ -6,6 +6,8 @@
 #ifndef BRAVE_BROWSER_BROWSING_DATA_BRAVE_CLEAR_BROWSING_DATA_H_
 #define BRAVE_BROWSER_BROWSING_DATA_BRAVE_CLEAR_BROWSING_DATA_H_
 
+#include "base/macros.h"
+
 namespace content {
 class BrowsingDataRemover;
 }
@@ -18,6 +20,7 @@ class BraveClearBrowsingData {
  public:
   // Clears browsing data for all loaded non-off-the-record profiles.
   // Profile's *OnExit preferences determine what gets cleared.
+  // Note: this method will wait until browsing data has been cleared.
   static void ClearOnExit();
 
   // Used for testing only.
@@ -38,6 +41,8 @@ class BraveClearBrowsingData {
 
  private:
   static OnExitTestingCallback* on_exit_testing_callback_;
+
+  DISALLOW_COPY_AND_ASSIGN(BraveClearBrowsingData);
 };
 
 }  // namespace content

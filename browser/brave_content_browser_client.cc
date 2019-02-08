@@ -12,6 +12,7 @@
 #include "base/json/json_reader.h"
 #include "base/task/post_task.h"
 #include "brave/browser/brave_browser_main_extra_parts.h"
+#include "brave/browser/brave_browser_main_parts.h"
 #include "brave/browser/brave_browser_process_impl.h"
 #include "brave/browser/extensions/brave_tor_client_updater.h"
 #include "brave/browser/renderer_host/brave_navigation_ui_data.h"
@@ -130,7 +131,7 @@ content::BrowserMainParts* BraveContentBrowserClient::CreateBrowserMainParts(
   ChromeBrowserMainParts* main_parts = static_cast<ChromeBrowserMainParts*>(
       ChromeContentBrowserClient::CreateBrowserMainParts(parameters));
   main_parts->AddParts(new BraveBrowserMainExtraParts());
-  return main_parts;
+  return new BraveBrowserMainParts(main_parts);
 }
 
 void BraveContentBrowserClient::BrowserURLHandlerCreated(
