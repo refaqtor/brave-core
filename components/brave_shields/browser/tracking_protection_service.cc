@@ -236,7 +236,8 @@ void TrackingProtectionService::OnDATFileDataReady() {
     return;
   }
   tracking_protection_client_.reset(new CTPParser());
-  if (!tracking_protection_client_->deserialize((char*)&buffer_.front())) {
+  if (!tracking_protection_client_->deserialize(
+          reinterpret_cast<char*>&buffer_.front())) {
     tracking_protection_client_.reset();
     LOG(ERROR) << "Failed to deserialize tracking protection data";
     return;

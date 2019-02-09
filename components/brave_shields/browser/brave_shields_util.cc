@@ -27,7 +27,7 @@ using content::BrowserThread;
 using content::Referrer;
 using content::ResourceRequestInfo;
 using net::URLRequest;
-using namespace net::registry_controlled_domains;
+using namespace net::registry_controlled_domains;  // NOLINT
 
 namespace brave_shields {
 
