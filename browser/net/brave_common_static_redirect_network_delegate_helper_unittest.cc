@@ -16,6 +16,8 @@
 
 namespace {
 
+const char kComponentUpdaterProxy[] = "https://componentupdater.brave.com"
+
 class BraveCommonStaticRedirectNetworkDelegateHelperTest: public testing::Test {
  public:
   BraveCommonStaticRedirectNetworkDelegateHelperTest()

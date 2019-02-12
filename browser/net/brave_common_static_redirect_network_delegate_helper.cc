@@ -19,10 +19,9 @@ bool IsUpdaterURL(const GURL& gurl) {
       URLPattern(URLPattern::SCHEME_HTTP, std::string(component_updater::kUpdaterFallbackUrl) + "*"),
       URLPattern(URLPattern::SCHEME_HTTPS, std::string(extension_urls::kChromeWebstoreUpdateURL) + "*")
   });
-  bool braveRedirect = gurl.query().find("braveRedirect=true") != std::string::npos;
   return std::any_of(updater_patterns.begin(), updater_patterns.end(),
-      [&gurl, braveRedirect](URLPattern pattern) {
-        return !braveRedirect && pattern.MatchesURL(gurl);
+      [&gurl](URLPattern pattern) {
+        return pattern.MatchesURL(gurl);
       });
 }
 
