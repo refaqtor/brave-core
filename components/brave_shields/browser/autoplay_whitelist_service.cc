@@ -75,7 +75,7 @@ scoped_refptr<base::SequencedTaskRunner> AutoplayWhitelistService::GetTaskRunner
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// The tracking protection factory. Using the Brave Shields as a singleton
+// The autoplay whitelist factory. Using the Brave Shields as a singleton
 // is the job of the browser process.
 std::unique_ptr<AutoplayWhitelistService> AutoplayWhitelistServiceFactory() {
   std::unique_ptr<AutoplayWhitelistService> service = std::make_unique<AutoplayWhitelistService>();
