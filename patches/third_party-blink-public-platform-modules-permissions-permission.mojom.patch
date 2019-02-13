@@ -1,4 +1,6 @@
 diff --git a/third_party/blink/public/platform/modules/permissions/permission.mojom b/third_party/blink/public/platform/modules/permissions/permission.mojom
+=======
+index 0476935916fc87251fd17489abea696421b1c346..388131750301eddd09268e3d6518313304d04944 100644
 --- a/third_party/blink/public/platform/modules/permissions/permission.mojom
 +++ b/third_party/blink/public/platform/modules/permissions/permission.mojom
 @@ -22,6 +22,7 @@ enum PermissionName {
