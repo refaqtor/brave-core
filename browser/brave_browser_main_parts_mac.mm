@@ -4,7 +4,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "brave/browser/brave_browser_main_parts_mac.h"
-#include "brave/browser/browsing_data/brave_clear_browsing_data.h"
 
 #import "brave/browser/mac/sparkle_glue.h"
 
