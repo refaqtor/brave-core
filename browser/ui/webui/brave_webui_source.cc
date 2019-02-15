@@ -1,10 +1,12 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
+/* Copyright (c) 2019 The Brave Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "brave/browser/ui/webui/brave_webui_source.h"
 
 #include <map>
+#include <vector>
 
 #include "components/grit/brave_components_strings.h"
 #include "content/public/browser/web_ui_data_source.h"
@@ -41,12 +43,14 @@ void AddResourcePaths(content::WebUIDataSource* html_source,
 
 }  // namespace
 
-void CustomizeWebUIHTMLSource(const std::string &name, content::WebUIDataSource* source) {
+void CustomizeWebUIHTMLSource(const std::string &name,
+                              content::WebUIDataSource* source) {
   static std::map<std::string, std::vector<WebUISimpleItem> > resources = {
     {
       std::string("newtab"), {
         { "img/toolbar/menu_btn.svg", IDR_BRAVE_COMMON_TOOLBAR_IMG },
-        // Hash path is the MD5 of the file contents, webpack image loader does this
+        // Hash path is the MD5 of the file contents,
+        // webpack image loader does this
         { "fd85070af5114d6ac462c466e78448e4.svg", IDR_BRAVE_NEW_TAB_IMG1 },
         { "314e7529efec41c8867019815f4d8dad.svg", IDR_BRAVE_NEW_TAB_IMG4 },
         { "6c337c63662ee0ba4e57f6f8156d69ce.svg", IDR_BRAVE_NEW_TAB_IMG2 },
@@ -100,7 +104,7 @@ void CustomizeWebUIHTMLSource(const std::string &name, content::WebUIDataSource*
   };
   AddResourcePaths(source, resources[name]);
 
-  static std::map<std::string, std::vector<WebUISimpleItem> > localized_strings = {
+  static std::map<std::string, std::vector<WebUISimpleItem>> localized_strings = {
     {
       std::string("newtab"), {
         { "adsBlocked", IDS_BRAVE_NEW_TAB_TOTAL_ADS_BLOCKED },
